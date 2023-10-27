@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Id_Estación: {
+      Id_Estacion: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     };
     transacciones.init({
-        Id_Estación: {
+        Id_Estacion: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         Fecha: {
-            type: DataTypes.DATETIME,
+            type: DataTypes.DATE,
             allowNull: false
         },
         Tipo_Pago: {

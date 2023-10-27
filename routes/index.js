@@ -5,6 +5,7 @@ const router = Router();
 const facturasController = require('../controllers/cuenta/facturaControler');
 const externoController = require('../controllers/externo/externoController');
 const serviciosController = require('../controllers/servicio/servicioController');
+const transaccionController = require('../controllers/transaccion/transaccionController');
 //RUTAS
 
 module.exports = (app) => {
@@ -21,4 +22,8 @@ module.exports = (app) => {
     //servicios
     router.get('/servicios/find', serviciosController.find);
     router.post('/servicios/create', serviciosController.create);
+
+    //transacciones
+    router.get('/transacciones/getTanques', transaccionController.find);
+    router.post('/transacciones/create',transaccionController.create)
 };
