@@ -25,5 +25,6 @@ module.exports = (app) => {
 
     //transacciones
     router.get('/transacciones/getTanques', transaccionController.find);
-    router.post('/transacciones/create',transaccionController.create)
+    router.post('/transacciones/PostTransaccion', transaccionController.create);
+
 };

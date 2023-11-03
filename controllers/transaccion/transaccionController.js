@@ -34,40 +34,61 @@ module.exports = {
         }
     },
 
+    async create(req, res) {
+        try {
+            const datos = req.body; // Serializar los datos
 
-    //create
-   async create (req, res) {
-        let datos = req.body //Serializar los datos
-        const datos_ingreso = { //Objeto
-            Id_Estacion: datos.Id_Estacion,
-            Cantidad_Vendida: datos.Cantidad_Vendida,
-            Precio_Galon: datos.Precio_Galon,
-            Id_Cliente: datos.Id_Cliente,
-            Fecha: datos.Fecha,
-            Tipo_Pago: datos.Tipo_Pago,
-            Descuento: datos.Descuento,
-            Empleado: datos.Empleado
-        };
+           // const transacciones = await TRANSACCION.create(datos_ingreso);
 
-        TRANSACCION.create(datos_ingreso)
-        .then(async (transacciones) => {
-            axios.put('http://localhost:8081/tanque/actualizar', {
-                tanqueId: datos.Id_Estacion,
-                nivel_actual: datos.Cantidad_Vendida
-            })
-            .then((response) => {
-                console.log('Nivel actual del tanque actualizado en la otra API');
-                res.send(transacciones);
-            })
-            .catch((error) => {
-                console.error('Error al intentar actualizar el nivel actual del tanque en la otra API:', error);
-                res.send(transacciones);
-            });
-        })
-        .catch((error) => {
-            console.log(error);
-            return res.status(500).json({ error: 'Error al insertar' });
-        });
-    },
-   //prueba
+            const nivelActualResponse = await axios.get(`http://localhost:8081/tanque/nivelActual/${datos.Id_Estacion}`);
+            const nivelActual = nivelActualResponse.data;
+
+            const nuevoNivel = nivelActual - datos.Cantidad_Vendida;
+
+            const options = {
+
+                method: 'PUT',
+                url: 'http://localhost:8081/tanque/actualizarNivel',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+
+                data: {
+                    
+                    request:{
+                        nuevo_nivel: nuevoNivel,
+                        tanque:{
+                            id: datos.Id_Estacion,
+                            capacidad: datos.capacidad,
+                            nivel_actual: nuevoNivel,
+                            tipo_gasolina: datos.tipo_gasolina,
+                            ubicacion: datos.ubicacion,
+                            precio_galon: datos.precio_galon,
+                            Id_Cliente: datos.Id_Cliente,
+                            tipo_pago: datos.tipo_pago,
+                            fecha: 1698985586885
+                        }
+                    }
+                
+                }
+            }
+
+            try {
+                const result = await axios(options);
+                
+                if (result && result.data) {
+                    // Si la respuesta contiene datos, envía esos datos en la respuesta de tu API
+                    res.status(200).json(result.data);
+                } else {
+                    res.status(404).send("No se encontraron datos de tanques");
+                }
+            } catch (error) {
+                console.error(error);
+                res.status(500).send("Error al obtener los datos de los tanques de gasolina");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Error al insertar o actualizar el nivel del tanque' });
+        }
+    }
 };
